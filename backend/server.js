@@ -6,8 +6,18 @@ import authRoutes from "./src/routes/auth.routes.js";
 import invoiceRoutes from "./src/routes/invoice.routes.js";
 import connectToDB from "./src/db/db.js";
 
+import cors from "cors";
+
 const app = express();
 connectToDB();
+
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  }),
+);
+
 app.use(express.json());
 app.use(cookieParser());
 
