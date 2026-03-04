@@ -3,7 +3,7 @@ import InvoiceLine from "../model/InvoiceLine.js";
 import Payment from "../model/Payment.js";
 import mongoose from "mongoose";
 
-// Create Invoice (Helper to test the module)
+// POST  Create Invoice
 export const createInvoice = async (req, res) => {
   try {
     const {
@@ -13,7 +13,7 @@ export const createInvoice = async (req, res) => {
       customerEmail,
       customerAddress,
       dueDate,
-      lineItems, // Array of { description, quantity, unitPrice }
+      lineItems,
     } = req.body;
 
     const userId = req.userId;
@@ -51,7 +51,8 @@ export const createInvoice = async (req, res) => {
   }
 };
 
-// 🔹 1. Get Invoice Details
+// Get Invoice Details by id and populate  invoice user email and name
+
 export const getInvoiceDetails = async (req, res) => {
   try {
     const { id } = req.params;
@@ -60,7 +61,7 @@ export const getInvoiceDetails = async (req, res) => {
       return res.status(400).json({ message: "Invalid Invoice ID" });
     }
 
-    const invoice = await Invoice.findById(id);
+    const invoice = await Invoice.findById(id).p;
     if (!invoice) {
       return res.status(404).json({ message: "Invoice not found" });
     }
@@ -72,11 +73,20 @@ export const getInvoiceDetails = async (req, res) => {
       invoice,
       lineItems,
       payments,
-      // The following are included in the invoice object but explicitly returned if needed
       total: invoice.total,
       amountPaid: invoice.amountPaid,
       balanceDue: invoice.balanceDue,
     });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// GET  get all invoices
+export const getAllInvoices = async (req, res) => {
+  try {
+    const invoices = await Invoice.find().populate("userId", "username email");
+    res.status(200).json(invoices);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

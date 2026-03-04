@@ -5,6 +5,7 @@ import {
   addPayment,
   archiveInvoice,
   restoreInvoice,
+  getAllInvoices,
 } from "../controller/invoice.controller.js";
 import { authMiddleware } from "../middleware/auth.middleware.js";
 
@@ -13,16 +14,19 @@ const router = express.Router();
 // Create Invoice
 router.post("/", authMiddleware, createInvoice);
 
-// 🔹 1. Get Invoice Details
+// Get Invoice Details BY ID
 router.get("/:id", authMiddleware, getInvoiceDetails);
 
-// 🔹 2. Add Payment
+// Get All Invoices
+router.get("/", getAllInvoices);
+
+// Add Payment
 router.post("/:id/payments", addPayment);
 
-// 🔹 3. Archive Invoice
+// Archive Invoice
 router.post("/archive", archiveInvoice);
 
-// 🔹 4. Restore Invoice (prompt didn't specify path, assuming /restore)
+// Restore Invoice
 router.post("/restore", restoreInvoice);
 
 export default router;
