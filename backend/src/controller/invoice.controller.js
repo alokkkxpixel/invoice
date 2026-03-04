@@ -10,6 +10,8 @@ export const createInvoice = async (req, res) => {
       invoiceNumber,
       customerName,
       issueDate,
+      customerEmail,
+      customerAddress,
       dueDate,
       lineItems, // Array of { description, quantity, unitPrice }
     } = req.body;
@@ -25,6 +27,8 @@ export const createInvoice = async (req, res) => {
       invoiceNumber,
       customerName,
       issueDate,
+      customerEmail,
+      customerAddress,
       dueDate,
       total,
       balanceDue: total,
