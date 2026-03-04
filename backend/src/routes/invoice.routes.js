@@ -6,14 +6,15 @@ import {
   archiveInvoice,
   restoreInvoice,
 } from "../controller/invoice.controller.js";
+import { authMiddleware } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
 // Create Invoice
-router.post("/", createInvoice);
+router.post("/", authMiddleware, createInvoice);
 
 // 🔹 1. Get Invoice Details
-router.get("/:id", getInvoiceDetails);
+router.get("/:id", authMiddleware, getInvoiceDetails);
 
 // 🔹 2. Add Payment
 router.post("/:id/payments", addPayment);

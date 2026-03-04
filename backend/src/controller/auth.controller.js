@@ -36,7 +36,10 @@ export const registerUser = async (req, res) => {
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
       expiresIn: "7d",
     });
-
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+    });
     res.status(201).json({
       message: "User registered successfully",
       token,
@@ -57,6 +60,8 @@ export const loginUser = async (req, res) => {
   try {
     const { email, password } = loginSchema.parse(req.body);
 
+    console.log(email, password);
+
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(401).json({ message: "Invalid credentials" });
@@ -71,6 +76,8 @@ export const loginUser = async (req, res) => {
       expiresIn: "7d",
     });
 
+    res.cookie("token", token);
+
     res.status(200).json({
       message: "Login successful",
       token,
@@ -84,5 +91,14 @@ export const loginUser = async (req, res) => {
     res.status(400).json({
       message: error.errors?.[0]?.message || "Login failed",
     });
+  }
+};
+
+export const logoutUser = async (req, res) => {
+  try {
+    res.clearCookie("token");
+    res.json({ message: "Logout successful" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };

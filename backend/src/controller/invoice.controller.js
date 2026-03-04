@@ -14,6 +14,8 @@ export const createInvoice = async (req, res) => {
       lineItems, // Array of { description, quantity, unitPrice }
     } = req.body;
 
+    const userId = req.userId;
+
     let total = 0;
     lineItems.forEach((item) => {
       total += item.quantity * item.unitPrice;
@@ -26,6 +28,7 @@ export const createInvoice = async (req, res) => {
       dueDate,
       total,
       balanceDue: total,
+      userId,
     });
 
     await invoice.save();
