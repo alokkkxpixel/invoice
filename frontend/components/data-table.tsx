@@ -107,6 +107,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
+import Link from "next/link"
 
 export const schema = z.object({
   id: z.string(),
@@ -353,10 +354,10 @@ export function DataTable({
             Download
           </Button>
           <Button asChild className="h-10 gap-2 rounded-xl bg-[#98E165] text-black hover:bg-[#86c95a]">
-            <a href="/dashboard/new">
+            <Link href="/invoices/new">
               <IconPlus className="h-4 w-4" />
               Create Invoice
-            </a>
+            </Link>
           </Button>
         </div>
       </div>
