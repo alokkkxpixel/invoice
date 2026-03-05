@@ -61,7 +61,10 @@ export const getInvoiceDetails = async (req, res) => {
       return res.status(400).json({ message: "Invalid Invoice ID" });
     }
 
-    const invoice = await Invoice.findById(id).p;
+    const invoice = await Invoice.findById(id).populate(
+      "userId",
+      "username email",
+    );
     if (!invoice) {
       return res.status(404).json({ message: "Invoice not found" });
     }

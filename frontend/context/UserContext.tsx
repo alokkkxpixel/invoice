@@ -41,7 +41,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   const login = (userData: User, tokenData: string) => {
     setUser(userData);
     setToken(tokenData);
-    // localStorage.setItem("user", JSON.stringify(userData));
+    localStorage.setItem("user", JSON.stringify(userData));
     localStorage.setItem("token", tokenData);
   };
 

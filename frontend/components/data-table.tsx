@@ -170,9 +170,12 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     accessorKey: "invoiceNumber",
     header: "Invoice Number",
     cell: ({ row }) => (
-      <span className="font-bold text-slate-900 leading-none capitalize">
+      <Link 
+        href={`/invoices/${row.original.id}`}
+        className="font-bold text-[#98E165] hover:text-[#86c95a] hover:underline leading-none capitalize"
+      >
         {row.original.invoiceNumber}
-      </span>
+      </Link>
     ),
   },
   {
