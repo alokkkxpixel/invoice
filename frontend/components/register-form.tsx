@@ -20,12 +20,14 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/context/UserContext"
 
-export function LoginForm({
+export function RegisterForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+
   const router = useRouter()
   const { login } = useAuth()
+  const [username, setUsername] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -37,23 +39,23 @@ export function LoginForm({
     setError("")
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
+      const response = await fetch("http://localhost:5000/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ username, email, password }),
       })
 
       if (!response.ok) {
         const errorData = await response.json()
-        throw new Error(errorData.message || "Failed to login")
+        throw new Error(errorData.message || "Failed to register")
       }
 
       const data = await response.json()
-      // Use UserContext to store user and token in state and localStorage
+      // Save data properly to localstorage through context
       login(data.user, data.token)
-      router.push("/invoices") // Redirect to whatever page after login
+      router.push("/invoices")
     } catch (err: any) {
       setError(err.message)
     } finally {
@@ -61,13 +63,14 @@ export function LoginForm({
     }
   }
 
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader>
-          <CardTitle>Login to your account</CardTitle>
+          <CardTitle>Create an account</CardTitle>
           <CardDescription>
-            Enter your email below to login to your account
+            Enter your details below to create your account
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -78,6 +81,18 @@ export function LoginForm({
               </div>
             )}
             <FieldGroup>
+              <Field>
+                <FieldLabel htmlFor="name">Username</FieldLabel>
+                <Input
+                  id="name"
+                  type="text"
+                  placeholder="John Doe"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  disabled={isLoading}
+                  required
+                />
+              </Field>
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
                 <Input
@@ -91,15 +106,7 @@ export function LoginForm({
                 />
               </Field>
               <Field>
-                <div className="flex items-center">
-                  <FieldLabel htmlFor="password">Password</FieldLabel>
-                  <a
-                    href="#"
-                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                  >
-                    Forgot your password?
-                  </a>
-                </div>
+                <FieldLabel htmlFor="password">Password</FieldLabel>
                 <Input
                   id="password"
                   type="password"
@@ -111,10 +118,10 @@ export function LoginForm({
               </Field>
               <Field>
                 <Button type="submit" disabled={isLoading}>
-                  {isLoading ? "Logging in..." : "Login"}
+                  {isLoading ? "Registering..." : "Register"}
                 </Button>
                 <FieldDescription className="text-center">
-                  Don&apos;t have an account? <Link href="/register" className="underline underline-offset-4">Sign up</Link>
+                  Already have an account? <Link href="/login" className="underline underline-offset-4">Log in</Link>
                 </FieldDescription>
               </Field>
             </FieldGroup>

@@ -368,7 +368,7 @@ export function DataTable({
       >
         <div className="flex items-center justify-between px-4 lg:px-6">
           <TabsList className="bg-transparent h-auto p-0 flex flex-wrap gap-2">
-            {["All", "Draft", "Unpaid", "Pending", "Failed", "Success"].map((tab) => (
+            {["All", "Paid"].map((tab) => (
               <TabsTrigger 
                 key={tab} 
                 value={tab.toLowerCase()}
