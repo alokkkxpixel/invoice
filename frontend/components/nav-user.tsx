@@ -28,6 +28,11 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import Link from "next/link"
+
+import { useRouter } from 'next/navigation'; // For the App Router
+import { useAuth } from "@/context/UserContext"
+// Or from 'next/router' for the Pages Router
 
 export function NavUser({
   user,
@@ -40,8 +45,29 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
+ 
+  const router = useRouter()
+
+  const {logout} = useAuth()
+  const token = localStorage.getItem("token")
+  const handlelogout = async () => {
+
+    const res = await fetch("http://localhost:5000/api/auth/logout", {
+      method: "POST",
+ headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+    },
+  
+  )
+    
+    if (res.ok) {
+      logout()
+      localStorage.removeItem("token")
+      
+    }
+  }
 
   return (
+
     <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
@@ -90,16 +116,17 @@ export function NavUser({
                 Account
               </DropdownMenuItem>
               <DropdownMenuItem>
+                <Link href="/invoices/payments">
                 <IconCreditCard />
-                Billing
+                Payments History
+                </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <IconNotification />
-                Notifications
-              </DropdownMenuItem>
+              
+              
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handlelogout }>
+
               <IconLogout />
               Log out
             </DropdownMenuItem>

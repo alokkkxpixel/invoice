@@ -170,7 +170,7 @@ export default function InvoiceDetailsPage() {
               <Button variant="outline" className="border-slate-200 font-bold shadow-sm">
                 Download PDF
               </Button>
-              <Button className="bg-[#98E165] text-black font-bold hover:bg-[#86c95a] shadow-sm">
+              <Button className="bg-primary text-primary-foreground font-bold hover:bg-primary/90 shadow-sm">
                 Record Payment
               </Button>
             </div>
@@ -249,7 +249,7 @@ export default function InvoiceDetailsPage() {
                   <Separator className="bg-slate-100" />
                   <div className="flex justify-between items-center text-xl font-black text-slate-900">
                     <span>Total</span>
-                    <span className="text-[#98E165]">${invoice.total.toFixed(2)}</span>
+                    <span className="text-primary">${invoice.total.toFixed(2)}</span>
                   </div>
                 </div>
               </div>
@@ -271,7 +271,7 @@ export default function InvoiceDetailsPage() {
                   </div>
                   <div className="flex justify-between items-center pt-2">
                     <span className="text-white font-bold text-lg">Balance Due</span>
-                    <span className="font-black text-2xl text-[#98E165]">${invoice.balanceDue.toFixed(2)}</span>
+                    <span className="font-black text-2xl text-primary">${invoice.balanceDue.toFixed(2)}</span>
                   </div>
                 </div>
               </div>

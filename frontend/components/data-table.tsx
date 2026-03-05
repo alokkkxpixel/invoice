@@ -172,7 +172,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     cell: ({ row }) => (
       <Link 
         href={`/invoices/${row.original.id}`}
-        className="font-bold text-[#98E165] hover:text-[#86c95a] hover:underline leading-none capitalize"
+        className="font-bold text-black hover:text-pink-500 hover:underline leading-none capitalize"
       >
         {row.original.invoiceNumber}
       </Link>
@@ -209,6 +209,11 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
   {
     accessorKey: "status",
     header: "Status",
+    filterFn: (row, columnId, filterValue) => {
+      if (!filterValue) return true
+      const status = row.getValue(columnId) as string
+      return status.toLowerCase() === filterValue.toLowerCase()
+    },
     cell: ({ row }) => {
       const status = row.original.status.toLowerCase()
       let variantClasses = "bg-slate-100 text-slate-700"
@@ -352,11 +357,8 @@ export function DataTable({
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between px-4 lg:px-6">
         <h1 className="text-2xl font-bold tracking-tight text-slate-900">Invoices</h1>
         <div className="flex items-center gap-2">
-          <Button variant="outline" className="h-10 gap-2 rounded-xl border-slate-200">
-            <Download className="h-4 w-4" />
-            Download
-          </Button>
-          <Button asChild className="h-10 gap-2 rounded-xl bg-[#98E165] text-black hover:bg-[#86c95a]">
+        
+          <Button asChild className="h-10 gap-2 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90">
             <Link href="/invoices/new">
               <IconPlus className="h-4 w-4" />
               Create Invoice
@@ -368,6 +370,13 @@ export function DataTable({
       <Tabs
         defaultValue="all"
         className="w-full flex-col justify-start gap-6"
+        onValueChange={(value) => {
+          if (value === "all") {
+            table.getColumn("status")?.setFilterValue(undefined)
+          } else {
+            table.getColumn("status")?.setFilterValue(value)
+          }
+        }}
       >
         <div className="flex items-center justify-between px-4 lg:px-6">
           <TabsList className="bg-transparent h-auto p-0 flex flex-wrap gap-2">
@@ -384,7 +393,7 @@ export function DataTable({
         </div>
 
         <div className="flex flex-col gap-4 px-4 lg:px-6 mt-2">
-          {/* Search and Filters Toolbar */}
+          {/* Search  */}
           <div className="flex flex-col gap-4 md:flex-row md:items-center">
             <div className="relative flex-1 max-w-sm">
               <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
@@ -397,20 +406,10 @@ export function DataTable({
                 }
               />
             </div>
-            <div className="flex items-center gap-2">
-              <Button variant="outline" className="h-10 gap-2 rounded-xl border-slate-200 bg-white">
-                <IconLayoutColumns className="h-4 w-4" />
-                Customize Columns
-              </Button>
-              <Button variant="outline" className="h-10 gap-2 rounded-xl border-slate-200 bg-white">
-                <IconPlus className="h-4 w-4" />
-                Add Filter
-              </Button>
-            </div>
+           
           </div>
 
-          <TabsContent
-            value="all"
+          <div
             className="m-0 relative flex flex-col gap-4"
           >
             <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
@@ -483,7 +482,7 @@ export function DataTable({
                   <IconChevronLeft className="h-4 w-4" />
                 </Button>
                 <div className="flex items-center gap-1">
-                   <Button variant="secondary" size="sm" className="h-9 w-9 rounded-xl bg-[#98E165] text-black font-bold border-none shadow-sm">
+                   <Button variant="secondary" size="sm" className="h-9 w-9 rounded-xl bg-primary text-primary-foreground font-bold border-none shadow-sm">
                       {table.getState().pagination.pageIndex + 1}
                    </Button>
                 </div>
@@ -498,7 +497,7 @@ export function DataTable({
                 </Button>
               </div>
             </div>
-          </TabsContent>
+          </div>
           {/* Other TabsContent can be added here or defaulted to 'all' */}
         </div>
       </Tabs>
@@ -554,7 +553,7 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
               </div>
               <div className="flex flex-col gap-1.5 text-right">
                  <span className="text-[10px] uppercase font-extrabold tracking-widest text-slate-400">Amount</span>
-                 <span className="text-base font-black text-[#98E165]">{item.amount}</span>
+                 <span className="text-base font-black text-primary">{item.amount}</span>
               </div>
            </div>
 
@@ -563,7 +562,7 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
            <div className="flex flex-col gap-6">
               <div className="flex items-center justify-between">
                  <span className="text-sm font-bold text-slate-900">Payment Activity</span>
-                 <Button variant="ghost" size="sm" className="text-[#98E165] font-bold hover:text-[#86c95a] hover:bg-slate-50">View all</Button>
+                 <Button variant="ghost" size="sm" className="text-primary font-bold hover:text-primary/90 hover:bg-slate-50">View all</Button>
               </div>
               
               <div className="flex flex-col gap-4">

@@ -18,25 +18,32 @@ import {
 import { Switch } from "@/components/ui/switch"
 import { DatePickerInput } from "./date-picker"
 import { InvoicePreview } from "./invoice-preview"
-
+import { useRouter } from 'next/navigation'; // For the App Router
 export function InvoiceCreation() {
   const [showPreview, setShowPreview] = React.useState(true)
   const [customer, setCustomer] = React.useState({
-    name: "Acme Enterprise",
-    email: "cmo@enterprise.com",
-    address: "1901 Thornridge Cir. Shiloh, Hawaii, USA. 81063",
+    name: "",
+    email: "",
+    address: "",
     invoiceNumber: `INV-${Math.floor(Math.random() * 9000) + 1000}`,
-    dueDate: "2024-08-27"
+    dueDate: ""
   })
   const [items, setItems] = React.useState([
     { id: Date.now(), description: "Web Design", quantity: 2, price: 500, total: 1000 },
   ])
 
+  const router = useRouter()
   const handleSendInvoice = async () => {
     try {
+      const token  = localStorage.getItem("token")
+      if(!token){
+        alert("Please login to continue")
+        window.location.href = "/login"
+        return
+      }
       const response = await fetch("http://localhost:5000/api/invoices", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
         body: JSON.stringify({
           invoiceNumber: customer.invoiceNumber,
           customerName: customer.name,
@@ -54,7 +61,7 @@ export function InvoiceCreation() {
       
       if (response.ok) {
         alert("Invoice created successfully!")
-        window.location.href = "/dashboard"
+        router.push("/invoices")
       } else {
         const error = await response.json()
         alert(`Error: ${error.message}`)
@@ -108,13 +115,13 @@ export function InvoiceCreation() {
                  id="show-preview" 
                  checked={showPreview} 
                  onCheckedChange={setShowPreview}
-                 className="data-[state=checked]:bg-[#98E165]"
+                 className="data-[state=checked]:bg-primary"
                />
             </div>
          </div>
          <div className="flex items-center gap-3">
             <Button variant="outline" className="h-11 rounded-xl px-6 font-semibold bg-white border-slate-200 text-slate-700">Save as Draft</Button>
-            <Button className="h-11 rounded-xl px-8 font-bold bg-[#98E165] text-black hover:bg-[#86c95a]">Send Invoice</Button>
+            <Button className="h-11 rounded-xl px-8 font-bold bg-primary text-primary-foreground hover:bg-primary/90" onClick={handleSendInvoice}>Send Invoice</Button>
          </div>
       </div>
 
@@ -201,7 +208,7 @@ export function InvoiceCreation() {
                           </SelectTrigger>
                           <SelectContent className="rounded-2xl border-slate-100">
                              <SelectItem value="usd">US Dollar ($)</SelectItem>
-                             <SelectItem value="eur">Euro (€)</SelectItem>
+                             {/* <SelectItem value="eur">Euro (€)</SelectItem> */}
                           </SelectContent>
                        </Select>
                     </div>

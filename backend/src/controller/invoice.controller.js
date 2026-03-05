@@ -100,6 +100,7 @@ export const addPayment = async (req, res) => {
   try {
     const { id } = req.params;
     const { amount } = req.body;
+    const userId = req.userId;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ message: "Invalid Invoice ID" });
@@ -124,6 +125,7 @@ export const addPayment = async (req, res) => {
       invoiceId: id,
       amount,
       paymentDate: new Date(),
+      userId,
     });
     await payment.save();
 
@@ -143,6 +145,20 @@ export const addPayment = async (req, res) => {
       payment,
       updatedInvoice: invoice,
     });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// 🔹 2.5 Get All Payments for the logged in user
+export const getAllPayments = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const payments = await Payment.find({ userId })
+      .populate("invoiceId", "invoiceNumber customerName")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json(payments);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
